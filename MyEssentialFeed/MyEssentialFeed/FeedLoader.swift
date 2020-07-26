@@ -8,9 +8,9 @@
 
 import Foundation
 
-enum LoadFeedResult {
+public enum LoadFeedResult {
     case success([FeedItem])
-    case error(Error)
+    case error(RemoteFeedLoader.Error)
 }
 
 protocol FeedLoader {

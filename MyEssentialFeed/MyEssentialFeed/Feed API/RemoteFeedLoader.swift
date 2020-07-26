@@ -8,14 +8,20 @@
 
 import Foundation
 
+//responsible for going out to the internet, and loading (via http) given a url
 public protocol HTTPClient {
-    func get(from: URL)
+    func get(from: URL, completion: @escaping (Error) -> Void)
 }
 
+// responsible for loading
 public class RemoteFeedLoader {
 
     private let client: HTTPClient
     private let url: URL
+    
+    public enum Error: Swift.Error {
+        case connectivity
+    }
     
     // MARK: - Init
     
@@ -24,8 +30,11 @@ public class RemoteFeedLoader {
         self.url = url
     }
     
-    public func load() {
-        client.get(from: url)
-    }
+    public func load(completion: ((LoadFeedResult)->Void)? = nil) {
+        client.get(from: url) { error in
+            if let error = error as? RemoteFeedLoader.Error {
+                completion?(LoadFeedResult.error(error))
+            }
+        }}
 
 }
