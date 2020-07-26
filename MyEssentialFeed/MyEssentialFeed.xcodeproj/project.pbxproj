@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7D8B004B24CD486B00386D27 /* MyEssentialFeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D8B004924CD486B00386D27 /* MyEssentialFeed.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D8B005224CD489300386D27 /* MyFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8B005124CD489300386D27 /* MyFeedItem.swift */; };
+		7D8B005424CD497800386D27 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8B005324CD497800386D27 /* FeedLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +17,7 @@
 		7D8B004924CD486B00386D27 /* MyEssentialFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyEssentialFeed.h; sourceTree = "<group>"; };
 		7D8B004A24CD486B00386D27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D8B005124CD489300386D27 /* MyFeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyFeedItem.swift; sourceTree = "<group>"; };
+		7D8B005324CD497800386D27 /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +52,7 @@
 			children = (
 				7D8B004924CD486B00386D27 /* MyEssentialFeed.h */,
 				7D8B005124CD489300386D27 /* MyFeedItem.swift */,
+				7D8B005324CD497800386D27 /* FeedLoader.swift */,
 				7D8B004A24CD486B00386D27 /* Info.plist */,
 			);
 			path = MyEssentialFeed;
@@ -135,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D8B005424CD497800386D27 /* FeedLoader.swift in Sources */,
 				7D8B005224CD489300386D27 /* MyFeedItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
