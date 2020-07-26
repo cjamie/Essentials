@@ -1,31 +1,45 @@
 import UIKit
 
-class ApiClient {
-    // type system enforces that this property cannot be changes/mutated
-    
-    static let instance = ApiClient() // make this a var to make it setable but this introduces global state
-    func login(completion: (LoggedInUser) -> ()) {}
+
+protocol FeedLoader {
+    func loadFeed(completion: @escaping (([String]) -> Void))
 }
 
-ApiClient.instance
+class FeedController: UIViewController {
 
+    var loader: FeedLoader!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-struct LoggedInUser {
-    
-}
-
-class MockApiClient: ApiClient {
-    
-}
-
-class LoginController: UIViewController {
-    
-    var api = ApiClient.instance   
-    
-    
-    func didTapLoginButton() {
-        api.login { user in
-            // show next screen
+        loader.loadFeed { loadedItems in
+            
         }
     }
+    
+    convenience init(loader: FeedLoader) {
+        self.init()
+        self.loader = loader
+    }
+    
 }
+
+
+
+final class RemoteFeedLoader: FeedLoader {
+    func loadFeed(completion: @escaping (([String]) -> Void)) {
+        // do something
+        print("-=- remote feed loader")
+        
+        completion([])
+    }
+}
+
+final class LocalFeedLoader: FeedLoader {
+    func loadFeed(completion: @escaping (([String]) -> Void)) {
+        // do something
+    }
+}
+
+let feedVC = FeedController(loader: RemoteFeedLoader())
+_ = feedVC.view
