@@ -18,35 +18,54 @@ class RemoteFeedLoaderTests: XCTestCase {
         let (client, _) = makeSUT()
 
         // THEN
-        XCTAssertNil(client.requestedURL)
+        XCTAssert(client.requestedURLs.isEmpty)
     }
     
-    func test_load_requestDataFromURL() {
+    func test_load_requestsDataFromURL() {
         // GIVEN
-        let url = URL(string: "https://a-url.com")!
-        let (client, sut) = makeSUT(url: url)
+        let urlInput = anyURL()
+        let (client, sut) = makeSUT(url: urlInput)
         
         // WHEN
         sut.load()
         
         // THEN
-        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs.last, urlInput)
     }
     
-    func makeSUT(client: HTTPClientSpy = HTTPClientSpy(), url: URL = URL(string: "https://a-url.com")!) -> (client: HTTPClientSpy, loader: RemoteFeedLoader) {
-        return (
-            client,
-            RemoteFeedLoader(url: url, client: client)
-        )
+    func test_loadTwice_requestsDataFromURLTwice() {
+        let inputUrl = anyURL()
+        let (client, sut) = makeSUT(url: inputUrl)
+        
+        sut.load()
+        sut.load()
+        
+        XCTAssertEqual(client.requestedURLs, [inputUrl, inputUrl])
     }
+
     
     // MARK: - Helpers
     
-    class HTTPClientSpy: HTTPClient {
-        var requestedURL: URL?
+    private func anyURL() -> URL {
+        return URL(string: Constants.arbitraryUrlString)!
+    }
+    
+    private enum Constants {
+        static let arbitraryUrlString = "https://a-url.com"
+    }
+    
+    private func makeSUT(
+        client: HTTPClientSpy = HTTPClientSpy(),
+        url: URL = URL(string: Constants.arbitraryUrlString)!
+    ) -> (client: HTTPClientSpy, loader: RemoteFeedLoader) {
+        return (client, RemoteFeedLoader(url: url, client: client))
+    }
+
+    private class HTTPClientSpy: HTTPClient {
+        var requestedURLs: [URL] = []
         
         func get(from url: URL) {
-            requestedURL = url
+            requestedURLs.append(url)
         }
     }
 
