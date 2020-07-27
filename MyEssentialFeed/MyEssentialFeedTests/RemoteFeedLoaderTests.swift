@@ -34,9 +34,10 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_loadTwice_requestsDataFromURLTwice() {
-        let inputUrl = anyURL()
-        let (client, sut) = makeSUT(url: inputUrl)
         
+        let inputUrl = anyURL()
+        
+        let (client, sut) = makeSUT(url: inputUrl)
         sut.load()
         sut.load()
         
@@ -46,25 +47,24 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_deliversErrorOnClientError() {
         let (client, sut) = makeSUT()
-        client.error = RemoteFeedLoader.Error.connectivity
-
-        var capturedError: RemoteFeedLoader.Error?
+    
+        var capturedErrors: [RemoteFeedLoader.Error] = []
         
-        sut.load { result in
-            switch result {
-            case .success:
-                
-                break
-            case .error(let error):
-                capturedError = error
-            }
-        }
+        sut.load { capturedErrors.append($0) }
+                 
+        client.complete(with: anyError())
         
-        XCTAssertEqual(capturedError, RemoteFeedLoader.Error.connectivity)
+        XCTAssertEqual(capturedErrors, [.connectivity])
         
     }
     
+    
+    
     // MARK: - Helpers
+    
+    private func anyError() -> Error {
+        return NSError(domain: "test", code: 0)
+    }
     
     private func anyURL() -> URL {
         return URL(string: Constants.arbitraryUrlString)!
@@ -83,14 +83,18 @@ class RemoteFeedLoaderTests: XCTestCase {
 
     private class HTTPClientSpy: HTTPClient {
         
-        var requestedURLs: [URL] = []
-        var error: Error?
+        var requestedURLs: [URL] {
+            return messages.map { $0.url }
+        }
+        
+        private var messages: [(url: URL, completion: (Error) -> Void)] = []
         
         func get(from url: URL, completion: @escaping (Error) -> Void) {
-            requestedURLs.append(url)
-            if let error = error {
-                completion(error)
-            }
+            messages.append((url, completion))
+        }
+        
+        func complete(with error: Error, at index: Int = 0) {
+            messages[index].completion(error)
         }
     }
 

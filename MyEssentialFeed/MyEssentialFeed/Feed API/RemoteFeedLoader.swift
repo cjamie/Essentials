@@ -30,11 +30,10 @@ public class RemoteFeedLoader {
         self.url = url
     }
     
-    public func load(completion: ((LoadFeedResult)->Void)? = nil) {
+    public func load(completion: ((Error)->Void)? = nil) {
         client.get(from: url) { error in
-            if let error = error as? RemoteFeedLoader.Error {
-                completion?(LoadFeedResult.error(error))
-            }
-        }}
+            completion?(.connectivity) // for now, this is hardcoded to return connectivity
+        }
+    }
 
 }
