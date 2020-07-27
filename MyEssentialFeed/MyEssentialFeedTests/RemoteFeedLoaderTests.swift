@@ -61,12 +61,18 @@ class RemoteFeedLoaderTests: XCTestCase {
         let (client, sut) = makeSUT()
         
         var capturedErrors: [RemoteFeedLoader.Error] = []
+
+        let statusCodes = [199, 201, 300, 400, 500]
         
-        sut.load { capturedErrors.append($0) }
-                
-        client.complete(withStatusCode: 400)
+        statusCodes.enumerated().forEach { index, statusCode in
+            sut.load { capturedErrors.append($0) }
+            client.complete(withStatusCode: statusCode, at: index)
+        }
         
-        XCTAssertEqual(capturedErrors, [.invalidStatus(code: 400)])
+        let expected: [RemoteFeedLoader.Error] = statusCodes.map { .invalidStatus(code: $0) }
+        
+        XCTAssertEqual(expected, capturedErrors)
+        
     }
     
     
