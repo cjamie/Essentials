@@ -69,13 +69,12 @@ class RemoteFeedLoaderTests: XCTestCase {
             client.complete(withStatusCode: statusCode, at: index)
         }
         
+        // we explicitly add in 
         let expected: [RemoteFeedLoader.Error] = statusCodes.map { .invalidStatus(code: $0) }
         
         XCTAssertEqual(expected, capturedErrors)
         
     }
-    
-    
     
     // MARK: - Helpers
     
@@ -104,12 +103,12 @@ class RemoteFeedLoaderTests: XCTestCase {
             return messages.map { $0.url }
         }
         
-        private var messages: [(url: URL, completion: (Error?, HTTPURLResponse?) -> Void)] = []
+        private var messages: [(url: URL, completion: (Result<HTTPURLResponse, Error>) -> Void)] = []
         
-        func get(from url: URL, completion: @escaping (Error?, HTTPURLResponse?) -> Void) {
+        func get(from url: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void) {
             messages.append((url, completion))
         }
-        
+
         func complete(withStatusCode statusCode: Int, at index: Int = 0) {
             
             let urlResponse = HTTPURLResponse(
@@ -119,13 +118,13 @@ class RemoteFeedLoaderTests: XCTestCase {
                 headerFields: nil
             )
             
-            messages[index].completion(nil, urlResponse)
+            messages[index].completion(.success(urlResponse!))
         }
         
         
         // this helper method allows us to call completions with input
         func complete(with error: Error, at index: Int = 0) {
-            messages[index].completion(error, nil)
+            messages[index].completion(.failure(error))
         }
     }
 

@@ -10,7 +10,11 @@ import Foundation
 
 //responsible for going out to the internet, and loading (via http) given a url
 public protocol HTTPClient {
-    func get(from: URL, completion: @escaping (Error?, HTTPURLResponse?) -> Void)
+    
+//    func get(from: URL, completion: @escaping (Error?, HTTPURLResponse?) -> Void)
+    
+    func get(from: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void)
+
 }
 
 // responsible for loading
@@ -32,12 +36,13 @@ public class RemoteFeedLoader {
     }
     
     public func load(completion: @escaping ((Error)->Void)) {
-        client.get(from: url) { error, response in
+        client.get(from: url) {
             
-            if let response = response {
-                completion(.invalidStatus(code: response.statusCode))
-            } else {
+            switch $0 {
+            case .failure(let error):
                 completion(.connectivity)
+            case .success(let response):
+                completion(.invalidStatus(code: response.statusCode))
             }
         }
     }
