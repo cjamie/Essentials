@@ -13,10 +13,11 @@ public protocol HTTPClient {
     
 //    func get(from: URL, completion: @escaping (Error?, HTTPURLResponse?) -> Void)
     
-    func get(from: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void)
+    func get(from: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
 
 }
 
+typealias HTTPClientResult = ()
 // responsible for loading
 public class RemoteFeedLoader {
 
@@ -25,7 +26,8 @@ public class RemoteFeedLoader {
     
     public enum Error: Swift.Error, Equatable {
         case connectivity
-        case invalidStatus(code: Int)
+//        case invalidStatus(code: Int)
+        case invalidData
     }
     
     // MARK: - Init
@@ -35,14 +37,15 @@ public class RemoteFeedLoader {
         self.url = url
     }
     
-    public func load(completion: @escaping ((Error)->Void)) {
+    public func load(completion: @escaping ((RemoteFeedLoader.Error)->Void)) {
         client.get(from: url) {
             
             switch $0 {
             case .failure(let error):
                 completion(.connectivity)
             case .success(let response):
-                completion(.invalidStatus(code: response.statusCode))
+//                completion(.invalidStatus(code: response.1.statusCode))
+                completion(.invalidData)
             }
         }
     }
